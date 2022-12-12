@@ -12,7 +12,7 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
-  final int squareSpeed = 2;
+  final int squareSpeed = 1;
   final double squareSize = 160;
   final int reoccurTime = 100;
   int imageIndex = 0;
@@ -42,7 +42,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                   setState(() {
                     _bottomPosition -= squareSpeed;
                   });
-                  if (_bottomPosition == 0) {
+                  if (_bottomPosition.toInt() == 0) {
                     squareDirection = 'up';
                   }
                 }
@@ -52,7 +52,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                   setState(() {
                     _bottomPosition += squareSpeed;
                   });
-                  if (_bottomPosition == _screenHeight - squareSize) {
+                  if (_bottomPosition.toInt() == _screenHeight - squareSize) {
                     squareDirection = 'bottom';
                   }
                 }
@@ -63,7 +63,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                   setState(() {
                     _rightPosition -= squareSpeed;
                   });
-                  if (_rightPosition == 0) {
+                  if (_rightPosition.toInt() == 0) {
                     squareDirection = 'left';
                   }
                 }
@@ -73,7 +73,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                   setState(() {
                     _rightPosition += squareSpeed;
                   });
-                  if (_rightPosition == _screenWidth - squareSize) {
+                  if (_rightPosition.toInt() == _screenWidth - squareSize) {
                     squareDirection = 'right';
                   }
                 }
@@ -98,49 +98,51 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     _screenHeight = mediaSize.height.toInt();
     _screenWidth = mediaSize.width.toInt();
 
-    return Scaffold(
-      body: Stack(
-        children: [
-          Positioned(
-            bottom: _bottomPosition,
-            left: _rightPosition,
-            child: GestureDetector(
-              onHorizontalDragEnd: (deg) {
-                if (deg.primaryVelocity! > 0) {
-                  squareDirection = 'left';
-                } else if (deg.primaryVelocity! < 0) {
-                  squareDirection = 'right';
-                }
-                tweenController.forward();
-              },
-              onVerticalDragEnd: ((deg) {
-                if (deg.primaryVelocity! > 0) {
-                  squareDirection = 'bottom';
-                } else if (deg.primaryVelocity! < 0) {
-                  squareDirection = 'up';
-                }
-                tweenController.forward();
-              }),
-              onTap: () {
-                final random = Random();
-                setState(() {
-                  imageIndex = random.nextInt(Images.images.length);
-                });
-              },
-              child: Container(
-                width: squareSize,
-                height: squareSize,
-                decoration: BoxDecoration(
-                  color: const Color(0xff28c5cc),
-                  image: DecorationImage(
-                    fit: BoxFit.fill,
-                    image: NetworkImage(Images.images[imageIndex]),
+    return SafeArea(
+      child: Scaffold(
+        body: Stack(
+          children: [
+            Positioned(
+              bottom: _bottomPosition,
+              left: _rightPosition,
+              child: GestureDetector(
+                onHorizontalDragEnd: (deg) {
+                  if (deg.primaryVelocity! > 0) {
+                    squareDirection = 'left';
+                  } else if (deg.primaryVelocity! < 0) {
+                    squareDirection = 'right';
+                  }
+                  tweenController.forward();
+                },
+                onVerticalDragEnd: ((deg) {
+                  if (deg.primaryVelocity! > 0) {
+                    squareDirection = 'bottom';
+                  } else if (deg.primaryVelocity! < 0) {
+                    squareDirection = 'up';
+                  }
+                  tweenController.forward();
+                }),
+                onTap: () {
+                  final random = Random();
+                  setState(() {
+                    imageIndex = random.nextInt(Images.images.length);
+                  });
+                },
+                child: Container(
+                  width: squareSize,
+                  height: squareSize,
+                  decoration: BoxDecoration(
+                    color: const Color(0xff28c5cc),
+                    image: DecorationImage(
+                      fit: BoxFit.fill,
+                      image: NetworkImage(Images.images[imageIndex]),
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
